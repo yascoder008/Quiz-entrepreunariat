@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz – Global Entrepreneurship Week</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800&family=Moderustic:wght@300;400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#195328; --dark-red:#960911; --red:#D10F0F; --orange:#F8A00B; --cream:#F5E8CB;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh; background:var(--cream); font-family:'Montserrat',sans-serif; color:#2b2b2b;
+  display:flex; align-items:center; justify-content:center; padding:24px; position:relative; overflow-x:hidden;
+}
+/* Formes décoratives */
+.blob{position:fixed;z-index:0;pointer-events:none}
+.b1{top:-90px;left:-70px;width:280px;height:230px;background:var(--dark-red);border-radius:30% 70% 60% 40%/50% 40% 60% 50%}
+.b2{top:-70px;right:18%;width:260px;height:140px;background:var(--orange);border-radius:40% 60% 70% 30%/40% 50% 50% 60%}
+.b3{bottom:-110px;left:-60px;width:360px;height:240px;background:var(--green);border-radius:60% 40% 55% 45%/55% 60% 40% 45%}
+.b4{bottom:-120px;right:-70px;width:340px;height:230px;background:var(--orange);border-radius:50% 50% 40% 60%/60% 50% 50% 40%}
+.b5{bottom:-60px;right:140px;width:260px;height:150px;background:var(--green);border-radius:60% 40% 50% 50%/70% 60% 40% 30%}
+
+.card{
+  position:relative; z-index:1; width:100%; max-width:720px; background:rgba(255,250,238,.92);
+  border-radius:28px; padding:40px 36px; box-shadow:0 14px 40px rgba(150,9,17,.15);
+  border:3px solid var(--green);
+}
+.screen{display:none}
+.screen.active{display:block;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.tag{font-family:'Moderustic',sans-serif;font-size:.85rem;letter-spacing:.08em;color:var(--green);margin-bottom:10px;text-transform:uppercase}
+h1{font-weight:800;font-size:clamp(1.6rem,5vw,2.4rem);color:var(--dark-red);line-height:1.1;text-transform:uppercase;margin-bottom:6px}
+h2{font-weight:800;font-size:1.2rem;color:var(--dark-red);line-height:1.4;margin-bottom:22px}
+.date{font-family:'Moderustic',sans-serif;color:var(--green);font-weight:700;margin-bottom:22px}
+.intro h3{font-weight:800;font-size:1.5rem;color:var(--red);margin-bottom:10px}
+p{line-height:1.6;margin-bottom:12px}
+.rules{margin:16px 0 26px;display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:var(--orange);color:#fff;font-weight:700;font-size:.85rem;padding:8px 16px;border-radius:999px}
+.pill.zero{background:var(--dark-red)}
+
+.btn{
+  font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;border:none;cursor:pointer;
+  background:var(--red);color:#fff;padding:14px 34px;border-radius:999px;transition:.2s;
+}
+.btn:hover{background:var(--dark-red);transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.9rem;color:var(--green);margin-bottom:10px}
+.bar{height:10px;background:#e4d5b2;border-radius:99px;overflow:hidden;margin-bottom:26px}
+.bar div{height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--red));border-radius:99px;transition:width .4s}
+
+.choices{display:grid;gap:12px;margin-bottom:24px}
+.choice{
+  display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;cursor:pointer;
+  background:#fff;border:2px solid var(--green);border-radius:16px;padding:14px 16px;
+  font-family:'Montserrat',sans-serif;font-size:.95rem;color:#2b2b2b;transition:.2s;
+}
+.choice:hover:not(:disabled){background:#f1e3bf;transform:translateX(4px)}
+.choice .l{flex:0 0 30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:grid;place-items:center}
+.choice.correct{background:var(--green);border-color:var(--green);color:#fff}
+.choice.correct .l{background:#fff;color:var(--green)}
+.choice.wrong{background:var(--red);border-color:var(--red);color:#fff}
+.choice.wrong .l{background:#fff;color:var(--red)}
+.choice:disabled{cursor:default}
+
+.feedback{min-height:24px;font-weight:700;margin-bottom:16px}
+.feedback.ok{color:var(--green)} .feedback.ko{color:var(--red)}
+
+.result{text-align:center}
+.score{font-weight:800;font-size:4rem;color:var(--red);margin:10px 0}
+.score span{color:var(--green);font-size:2rem}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div>
+
+<main class="card">
+
+  <!-- Intro -->
+  <section id="intro" class="screen intro active">
+    <div class="tag">2026-2027</div>
+    <h1>Quiz sur l'entrepreunariat</h1>
+    <div class="date">GEW A mp</div>
+    <h3>C'est quoi ?</h3>
+    <p>Un quiz simple sur tout ce qui concerne l'entrepreneuriat, dédié aux étudiants, afin de les inciter à découvrir le monde du travail.</p>
+    <p>Des questions à choix multiples, une seule bonne réponse par question.</p>
+    <div class="rules"><span class="pill">Bonne réponse = +1 point</span><span class="pill zero">Mauvaise réponse = 0 point</span></div>
+    <button class="btn" id="startBtn">Commencer</button>
+  </section>
+
+  <!-- Question -->
+  <section id="quiz" class="screen">
+    <div class="top"><span id="counter"></span><span id="scoreLive"></span></div>
+    <div class="bar"><div id="progress"></div></div>
+    <h2 id="question"></h2>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn" id="nextBtn" disabled>Suivant</button>
+  </section>
+
+  <!-- Résultat -->
+  <section id="end" class="screen result">
+    <div class="tag">Résultat</div>
+    <h1>Quiz terminé !</h1>
+    <div class="score" id="finalScore"></div>
+    <p id="message"></p>
+    <button class="btn" id="restartBtn">Recommencer</button>
+  </section>
+
+</main>
+
+<script>
+const questions = [
+  {q:"Qu'est-ce qu'un entrepreneur ?", c:["Une personne qui crée et développe une entreprise en prenant des risques.","Une personne qui investit son argent dans une entreprise sans participer à l’activité.","Une personne qui achète des produits pour elle-même.","Une personne qui organise des événements."], a:0},
+  {q:"Comment appelle-t-on une idée qui répond à un besoin du marché et peut devenir une activité commerciale ?", c:["Un loisir.","Une dépense personnelle.","Une idée entrepreneuriale.","Une obligation administrative."], a:2},
+  {q:"Qu'est-ce qu'une start-up ?", c:["Une jeune entreprise innovante.","Une entreprise locale qui vend dans sa région.","Une association sportive.","Un magasin qui vend uniquement des vêtements."], a:0},
+  {q:"Que signifie le mot « bénéfice » pour une entreprise ?", c:["Le prix de vente d'un seul produit.","Le montant total des dépenses.","Le nombre de salariés.","L'argent restant après déduction des charges."], a:3},
+  {q:"Qu'est-ce qu'une étude de marché ?", c:["Une étude du budget personnel de l'entrepreneur.","Une analyse des besoins des clients, des concurrents et du marché.","Une méthode pour recruter des employés.","Un document qui présente uniquement les bénéfices de l'entreprise."], a:1},
+  {q:"Qu'est-ce que le seuil de rentabilité d'une entreprise ?", c:["Le moment où l'entreprise commence à recruter des employés.","Le montant maximal qu'une entreprise peut emprunter.","Le niveau de ventes à partir duquel l'entreprise couvre toutes ses charges, sans perte ni bénéfice.","Le montant total investi au lancement du projet."], a:2},
+  {q:"Qu'est-ce que le MVP (Minimum Viable Product) dans l'entrepreneuriat ?", c:["La version finale et complète d'un produit.","Une première version simplifiée d'un produit permettant de tester son idée auprès des clients.","Un document qui présente les dépenses de l'entreprise.","Une stratégie pour augmenter les prix."], a:1},
+  {q:"Quelle est la différence entre un entrepreneur et un salarié ?", c:["L'entrepreneur développe son propre projet et prend des risques, tandis que le salarié travaille généralement pour un employeur.","L'entrepreneur travaille toujours seul, tandis que le salarié travaille toujours en équipe.","Le salarié prend toutes les décisions de l'entreprise, tandis que l'entrepreneur exécute les ordres.","L'entrepreneur reçoit obligatoirement un salaire fixe, tandis que le salarié dépend des bénéfices."], a:0},
+  {q:"Que signifie B2B ?", c:["Business to Bank.","Business to Business.","Buyer to Business.","Business to Buyer."], a:1},
+  {q:"Qu'est-ce que l'incubation d'une start-up ?", c:["Le processus de fermeture d'une entreprise.","Un programme d'accompagnement qui aide les entrepreneurs à développer leurs projets.","Une méthode pour augmenter les prix des produits.","Une technique de recrutement des employés."], a:1},
+  {q:"Qu'est-ce que le bootstrapping ?", c:["Vendre son entreprise à une grande société.","Obtenir obligatoirement un financement auprès d'une banque.","Financer son entreprise principalement avec ses propres ressources, sans dépendre d'investisseurs externes.","Recevoir une subvention de l'État pour lancer son projet."], a:2},
+  {q:"Quelle est la différence entre un business angel et un incubateur ?", c:["Le business angel apporte principalement un financement et parfois des conseils, tandis que l'incubateur accompagne le développement du projet.","Le business angel crée les logos, tandis que l'incubateur recrute les clients.","Le business angel est un salarié, tandis que l'incubateur est une banque.","Les deux désignent exactement la même chose."], a:0},
+  {q:"Sami, étudiant à Alger, veut ouvrir un petit café près de la fac. Avant de louer un local et d’acheter du matériel, il passe deux jours devant l’université et demande à 50 étudiants où ils prennent leur café, combien ils dépensent et ce qui leur manque. Il découvre que la plupart vont à un café éloigné, faute d’option proche et abordable. Que vient de faire Sami ?", c:["Un plan de financement","Un MVP","Une étude de marché","Un calcul de seuil de rentabilité"], a:2},
+  {q:"Amine a créé une petite entreprise de livraison. Après six mois, il constate que ses dépenses mensuelles sont de 80 000 DA. Il doit vendre suffisamment de produits et réaliser assez de ventes pour couvrir exactement ses dépenses, sans réaliser de bénéfice ni subir de perte. Quel concept cherche-t-il à atteindre ?", c:["Le chiffre d'affaires","Le financement participatif","Le seuil de rentabilité","Le bootstrapping"], a:2},
+  {q:"Sarah souhaite lancer une marque de vêtements écoresponsables. Elle présente son projet à un investisseur expérimenté qui accepte d'investir 500 000 DA en échange d'une participation au capital de son entreprise. En plus de son argent, il lui propose des conseils et lui fait profiter de son réseau professionnel. Quel type d'investisseur est-il ?", c:["Un incubateur","Un business angel","Un fournisseur","Un client potentiel"], a:1}
+];
+
+const $ = id => document.getElementById(id);
+const screens = ["intro","quiz","end"];
+let index = 0, score = 0;
+
+function show(id){ screens.forEach(s => $(s).classList.toggle("active", s === id)); }
+
+function start(){ index = 0; score = 0; show("quiz"); render(); }
+
+function render(){
+  const item = questions[index];
+  $("counter").textContent = `Question ${index+1} / ${questions.length}`;
+  $("scoreLive").textContent = `Score : ${score}`;
+  $("progress").style.width = (index / questions.length * 100) + "%";
+  $("question").textContent = item.q;
+  $("feedback").textContent = ""; $("feedback").className = "feedback";
+  $("nextBtn").disabled = true;
+  $("nextBtn").textContent = index === questions.length - 1 ? "Voir le résultat" : "Suivant";
+
+  const box = $("choices"); box.innerHTML = "";
+  item.c.forEach((text, i) => {
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.innerHTML = `<span class="l">${"ABCD"[i]}</span><span></span>`;
+    b.lastChild.textContent = text;
+    b.onclick = () => answer(i);
+    box.appendChild(b);
+  });
+}
+
+function answer(i){
+  const item = questions[index];
+  const btns = document.querySelectorAll(".choice");
+  btns.forEach((b, k) => {
+    b.disabled = true;
+    if (k === item.a) b.classList.add("correct");
+  });
+  const fb = $("feedback");
+  if (i === item.a){
+    score++;
+    fb.textContent = "Bonne réponse ! +1 point"; fb.classList.add("ok");
+  } else {
+    btns[i].classList.add("wrong");
+    fb.textContent = "Mauvaise réponse. 0 point"; fb.classList.add("ko");
+  }
+  $("scoreLive").textContent = `Score : ${score}`;
+  $("nextBtn").disabled = false;
+}
+
+function next(){
+  index++;
+  if (index < questions.length) render(); else finish();
+}
+
+function finish(){
+  show("end");
+  $("finalScore").innerHTML = `${score}<span> / ${questions.length}</span>`;
+  const r = score / questions.length;
+  $("message").textContent =
+    r >= .8 ? "Excellent ! Tu as l'esprit d'un vrai entrepreneur." :
+    r >= .5 ? "Bien joué ! Continue à explorer le monde de l'entrepreneuriat." :
+              "Pas mal pour un début ! Rejoins nos conférences et stands pour en apprendre plus.";
+}
+
+$("startBtn").onclick = start;
+$("nextBtn").onclick = next;
+$("restartBtn").onclick = () => { show("intro"); };
+</script>
+</body>
+</html>
