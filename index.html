@@ -70,6 +70,12 @@ p{line-height:1.6;margin-bottom:12px}
 .feedback{min-height:24px;font-weight:700;margin-bottom:16px}
 .feedback.ok{color:var(--green)} .feedback.ko{color:var(--red)}
 
+#intro{text-align:center}
+#intro .rules{justify-content:center}
+.concept{list-style:none;margin:0 auto 6px;max-width:520px}
+.concept li{line-height:1.6;margin-bottom:8px}
+.concept li::before{content:"– ";color:var(--red);font-weight:800}
+.actions{text-align:center}
 .result{text-align:center}
 .score{font-weight:800;font-size:4rem;color:var(--red);margin:10px 0}
 .score span{color:var(--green);font-size:2rem}
@@ -85,9 +91,12 @@ p{line-height:1.6;margin-bottom:12px}
     <div class="tag">2026-2027</div>
     <h1>Quiz sur l'entrepreunariat</h1>
     <div class="date">GEW A mp</div>
-    <h3>C'est quoi ?</h3>
-    <p>Un quiz simple sur tout ce qui concerne l'entrepreneuriat, dédié aux étudiants, afin de les inciter à découvrir le monde du travail.</p>
-    <p>Des questions à choix multiples, une seule bonne réponse par question.</p>
+    <h3>Concept :</h3>
+    <ul class="concept">
+      <li>Des questions à choix multiples</li>
+      <li>Sur l'entrepreneuriat : créer une entreprise, étudier un marché, lancer une start-up, trouver un financement, à travers des cas concrets d'étudiants</li>
+      <li>Une seule bonne réponse par question</li>
+    </ul>
     <div class="rules"><span class="pill">Bonne réponse = +1 point</span><span class="pill zero">Mauvaise réponse = 0 point</span></div>
     <button class="btn" id="startBtn">Commencer</button>
   </section>
@@ -99,7 +108,7 @@ p{line-height:1.6;margin-bottom:12px}
     <h2 id="question"></h2>
     <div class="choices" id="choices"></div>
     <div class="feedback" id="feedback"></div>
-    <button class="btn" id="nextBtn" disabled>Suivant</button>
+    <div class="actions"><button class="btn" id="nextBtn" disabled>Suivant</button></div>
   </section>
 
   <!-- Résultat -->
